@@ -8,6 +8,7 @@ using std::tuple;
 
 constexpr double R2D = 180.0 / M_PI; 
 
+// angles in radian
 struct mounting_angle {
     double mounting_roll;
     double mounting_pitch;
@@ -16,6 +17,7 @@ struct mounting_angle {
     mounting_angle(double _roll, double _pitch, double _heading) : mounting_roll(_roll), mounting_pitch(_pitch), mounting_heading(_heading){}
 };
 
+// angle in radian 
 struct attitude_angle {
     double attitude_roll;
     double attitude_pitch;
@@ -61,38 +63,38 @@ tuple<double, double> boundary_angle(mounting_angle mounting_tx, attitude_angle 
                                      mounting_angle mounting_rx, attitude_angle attitude_rx,
                                      double txTilt) {
     Eigen::Vector3d txIdeal {1.0, 0.0, 0.0};
-        Eigen::Vector3d txMount = attitude2Matrix(mounting_tx) * txIdeal;
-        Eigen::Vector3d txGeo = attitude2Matrix(attitude_tx) * txMount;
+    Eigen::Vector3d txMount = attitude2Matrix(mounting_tx) * txIdeal;
+    Eigen::Vector3d txGeo = attitude2Matrix(attitude_tx) * txMount;
 
-        Eigen::Vector3d rxIdeal {0.0, 1.0, 0.0};
-        Eigen::Vector3d rxMount = attitude2Matrix(mounting_rx) * rxIdeal;
-        Eigen::Vector3d rxGeo = attitude2Matrix(attitude_rx) * rxMount;
+    Eigen::Vector3d rxIdeal {0.0, 1.0, 0.0};
+    Eigen::Vector3d rxMount = attitude2Matrix(mounting_rx) * rxIdeal;
+    Eigen::Vector3d rxGeo = attitude2Matrix(attitude_rx) * rxMount;
 
-        const double m1 = txGeo(0), n1 = txGeo(1), p1 = txGeo(2);
-        const double m2 = rxGeo(0), n2 = rxGeo(1), p2 = rxGeo(2);
-        double denominator = m1 * n2 - m2 * n1;
+    const double m1 = txGeo(0), n1 = txGeo(1), p1 = txGeo(2);
+    const double m2 = rxGeo(0), n2 = rxGeo(1), p2 = rxGeo(2);
+    double denominator = m1 * n2 - m2 * n1;
 
-        Eigen::Vector3d directionVect = txGeo.cross(rxGeo);
+    Eigen::Vector3d directionVect = txGeo.cross(rxGeo);
 
-        const double M1 = directionVect(0);
-        const double M2 = directionVect(1);
-        const double A = n2 * sin(txTilt) / denominator;
-        const double B = m2 * sin(txTilt) / denominator;
-        const double k = n1 / denominator;
-        const double t = m1 / denominator;
-        const double c = M1 * k - M2 * t;
-        const double T = M1 * A - M2 * B;
+    const double M1 = directionVect(0);
+    const double M2 = directionVect(1);
+    const double A = n2 * sin(txTilt) / denominator;
+    const double B = m2 * sin(txTilt) / denominator;
+    const double k = n1 / denominator;
+    const double t = m1 / denominator;
+    const double c = M1 * k - M2 * t;
+    const double T = M1 * A - M2 * B;
 
-        const double coeff1 = c * c - k * k - t * t;
-        const double coeff2 = 2.0 * (T * c - A * k - B * t);
-        const double coeff3 = T * T + 1.0 - A * A - B * B;
+    const double coeff1 = c * c - k * k - t * t;
+    const double coeff2 = 2.0 * (T * c - A * k - B * t);
+    const double coeff3 = T * T + 1.0 - A * A - B * B;
 
-        const double delta = coeff2 * coeff2 - 4.0 * coeff3 * coeff1;
-        const double l1 = (-coeff2 + sqrt(delta)) / (2.0 * coeff1);
-        const double l2 = (-coeff2 - sqrt(delta)) / (2.0 * coeff1);
+    const double delta = coeff2 * coeff2 - 4.0 * coeff3 * coeff1;
+    const double l1 = (-coeff2 + sqrt(delta)) / (2.0 * coeff1);
+    const double l2 = (-coeff2 - sqrt(delta)) / (2.0 * coeff1);
 
 
-        return std::make_tuple(asin(l2) * R2D, asin(l1) * R2D);
+    return std::make_tuple(asin(l2) * R2D, asin(l1) * R2D);
 }
 
 
