@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(Boundary)
 
+# need Eigen3 library
 find_package(Eigen3 REQUIRED)
 
 add_executable(${PROJECT_NAME} boundary_angle.cpp)
