@@ -553,6 +553,8 @@ int mb_beaudoin(int verbose, mb_3D_orientation tx_align, mb_3D_orientation tx_or
   double b = x0 * x0 + y0 * y0 - 1.0;
   // dont't know how to mark the uncorrect beams according to the discriminant - sqrt(a * a - b)
   // so just use the safe square root.
+  
+  // a * a - b >= 0 ? a good beam : a bad beam and should be removed;
   double t = -a + SAFESQRT(a * a - b);
   
   mb_3D_vector relVect;
@@ -560,7 +562,9 @@ int mb_beaudoin(int verbose, mb_3D_orientation tx_align, mb_3D_orientation tx_or
   relVect.y = y0 + t * directionVect.y;
   relVect.z = t * directionVect.z;
   
+  // incidence angle
   *beamDepression = acos(relVect.z) * 180.0 / M_PI;
+  // grazing angle
   *beamDepression = 90.0  - *beamDepression;
   *beamAzimuth = atan2(relVect.y, relVect.x) * 180.0 / M_PI;
   *beamAzimuth -= reference_heading;
