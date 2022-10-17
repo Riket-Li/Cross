@@ -555,7 +555,8 @@ int mb_beaudoin(int verbose, mb_3D_orientation tx_align, mb_3D_orientation tx_or
   // so just use the safe square root.
   
   // a * a - b >= 0 ? a good beam : a bad beam and should be removed;
-  double t = -a + SAFESQRT(a * a - b);
+//   double t = -a + SAFESQRT(a * a - b);
+  double t = a * a >= b ? -a + sqrt(a * a - b) : -a - sqrt(b - a * a);
   
   mb_3D_vector relVect;
   relVect.x = x0 + t * directionVect.x;
